@@ -2,13 +2,7 @@ require 'spec_helper'
 
 describe OACadun::User do
   
-  before do
-    FakeWeb.register_uri(:put, "http://isp-authenticator.dev.globoi.com:8280/ws/rest/autorizacao",
-                         :body => File.join(File.dirname(__FILE__), "..", "support", "fixtures", "autorizacao.xml"))
-
-    FakeWeb.register_uri(:get, "http://isp-authenticator.dev.globoi.com:8280/cadunii/ws/resources/pessoa/21737810", 
-                         :body => File.join(File.dirname(__FILE__), "..", "support", "fixtures", "pessoa.xml"))
-  end
+  before { stub_requests }
   
   subject { OACadun::User.new("GLB_ID", "127.0.0.1", 2626) }
   

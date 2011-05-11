@@ -3,6 +3,8 @@ module OmniAuth
     class Cadun
       include OmniAuth::Strategy
       
+      attr_reader :glb_id, :url, :params
+      
       def initialize(app, options = {})
         super(app, :cadun, options)
       end
@@ -12,27 +14,32 @@ module OmniAuth
       end
       
       def auth_hash
-        params = CGI.parse(URI.parse(env["REQUEST_URI"]).query)
+        @params = CGI.parse(URI.parse(env["REQUEST_URI"]).query)
         @glb_id = params["GLBID"].first
-      
-        { :GLBID => @glb_id,
-          :url => params["url"].first,
-          :id => gateway.content.xpath("usuarioID").text,
-          :email => gateway.content.xpath("emailPrincipal").text,
-          :status => gateway.content.xpath("status").text,
-          :username => gateway.content.xpath("username").text,
-          :name => gateway.full_content.xpath("nome").text,
-          :city => gateway.full_content.xpath("cidade/nome").text,
-          :state => gateway.full_content.xpath("estado/sigla").text,
-          :gender => gateway.full_content.xpath("sexo").text,
-          :birthday =>  Time.parse(gateway.full_content.xpath("dataNascimento").text).strftime('%d/%m/%Y'),
-          :mobile => "#{gateway.full_content.xpath("telefoneCelularDdd").text} #{gateway.full_content.xpath("telefoneCelular").text}",
-          :phone => "#{gateway.full_content.xpath("telefoneResidencialDdd").text} #{gateway.full_content.xpath("telefoneResidencial").text}" }
+        @url = params["url"].first
+        
+        { :GLBID => glb_id,
+          :url => url,
+          :id => user.id,
+          :email => user.email,
+          :status => user.status,
+          :username => user.login,
+          :name => user.name,
+          :address => user.address,
+          :suburb => user.suburb,
+          :city => user.city,
+          :state => user.state,
+          :country => user.country,
+          :gender => user.gender,
+          :birthday =>  user.birthday.strftime('%d/%m/%Y'),
+          :mobile => user.mobile,
+          :phone => user.phone,
+          :cpf => user.cpf }
       end
       
-      protected      
-      def gateway
-        @gateway ||= OACadun::Gateway.new(@glb_id, env["REMOTE_ADDR"], service_id)
+      protected
+      def user
+        @user ||= OACadun::User.new(glb_id, env["REMOTE_ADDR"], service_id)
       end
       
       def service_id

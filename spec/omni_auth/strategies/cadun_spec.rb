@@ -1,7 +1,11 @@
 require 'spec_helper'
 
 describe OmniAuth::Strategies::Cadun do
+
+  let(:app) { lambda{ |env| [200, {}, ['Hello']] } }
+  
   describe "#request_phase" do
+
     before do
       @status, @headers, @body = OmniAuth::Strategies::Cadun.new(app, :service_id => 1).request_phase
     end
@@ -15,14 +19,24 @@ describe OmniAuth::Strategies::Cadun do
       subject { @headers }
       specify { should include("Location" => "https://login.dev.globoi.com/login/1") }
     end
+
   end
   
   describe "#auth_hash" do
-    subject do
-      OmniAuth::Strategies::Cadun.new(app, :service_id => 1).auth_hash
+
+    let(:strategy) { OmniAuth::Strategies::Cadun.new(app, :service_id => 1) }
+    
+    before do
+      stub_requests
+      
+      strategy.call!({ "rack.session" => {},
+                       "REQUEST_URI" => "http://localhost?GLBID=GLBID&url=/go_back",
+                       "REMOTE_ADDR" => "127.0.0.1" })
     end
     
-    specify { should include(:GLBID => "GLB_ID") }
+    subject { strategy.auth_hash }
+    
+    specify { should include(:GLBID => "GLBID") }
     specify { should include(:id => "21737810") }
     specify { should include(:email => "fab1@spam.la") }
     specify { should include(:status => "ATIVO") }
@@ -38,5 +52,8 @@ describe OmniAuth::Strategies::Cadun do
     specify { should include(:mobile => "21 99999999") }
     specify { should include(:phone => "21 22881060") }
     specify { should include(:cpf => "09532034765") }
+    specify { should include(:url => "/go_back")}
+  
   end
+
 end

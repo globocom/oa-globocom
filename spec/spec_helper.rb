@@ -17,6 +17,10 @@ RSpec.configure do |config|
   config.run_all_when_everything_filtered = true
 end
 
-def app
-  lambda{|env| [200, {}, ['Hello']]}
+def stub_requests
+  FakeWeb.register_uri(:put, "http://isp-authenticator.dev.globoi.com:8280/ws/rest/autorizacao",
+                       :body => File.join(File.dirname(__FILE__), "support", "fixtures", "autorizacao.xml"))
+
+  FakeWeb.register_uri(:get, "http://isp-authenticator.dev.globoi.com:8280/cadunii/ws/resources/pessoa/21737810", 
+                       :body => File.join(File.dirname(__FILE__), "support", "fixtures", "pessoa.xml"))
 end
