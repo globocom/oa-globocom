@@ -1,36 +1,32 @@
-require 'nokogiri'
-
 module OACadun
   class Gateway
     def initialize(glb_id, ip, service_id)
-      @glb_id = glb_id
-      @ip = ip
-      @service_id = service_id
-    end
-
-    def content      
-      @content ||= Nokogiri::XML(authentication).children
+      @glb_id, @ip, @service_id = glb_id, ip, service_id
     end
   
-    def full_content
-      @full_content ||= Nokogiri::XML(resource).children
+    def content
+      @content ||= Nokogiri::XML(resource).children
     end
 
-    protected
-    def authentication
-      @authentication ||= connection.put("/ws/rest/autorizacao", xml, {'Content-Type' => 'text/xml'}).body
+    def authorization
+      @authorization ||= Nokogiri::XML(connection.put("/ws/rest/autorizacao", "<usuarioAutorizado><glbId>#{@glb_id}</glbId><ip>#{@ip}</ip><servicoID>#{@service_id}</servicoID></usuarioAutorizado>", {'Content-Type' => 'text/xml'}).body).children
     end
   
     def resource
-      @resource ||= connection.get("/cadunii/ws/resources/pessoa/#{content.xpath("usuarioID").text}", {'Content-Type' => 'text/xml'}).body
+      @resource ||= connection.get("/cadunii/ws/resources/pessoa/#{authorization.xpath("usuarioID").text}", {'Content-Type' => 'text/xml'}).body
     end
 
     def connection
-      @connection ||= Net::HTTP.new("isp-authenticator.dev.globoi.com", 8280)
+      @connection ||= Net::HTTP.new(*(development? ? ["isp-authenticator.dev.globoi.com", 8280] : ["autenticacao.globo.com", 8080] ))
     end
-
-    def xml   
-      "<usuarioAutorizado><glbId>#{@glb_id}</glbId><ip>#{@ip}</ip><servicoID>#{@service_id}</servicoID></usuarioAutorizado>"
+   
+    protected
+    def development?
+      if defined?(Rails)
+        Rails.env.development?
+      else
+        true
+      end
     end
   end
 end

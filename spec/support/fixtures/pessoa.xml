@@ -1,0 +1,77 @@
+<?xml version="1.0" encoding="UTF-8" standalone="yes"?>
+<pessoa>
+  <id>21737810</id>
+  <alteracao>2011-04-25T00:00:00-03:00</alteracao>
+  <bairro>Andaraí</bairro>
+  <cep>20510060</cep>
+  <cidade>
+    <estadoId>19</estadoId>
+    <id>7043</id>
+    <nome>Rio de Janeiro</nome>
+  </cidade>
+  <cidadeId>7043</cidadeId>
+  <complemento>807</complemento>
+  <cookie>0000097QgXvo9pYpqTFi1p21BBPvV0Al</cookie>
+  <cpf>09532034765</cpf>
+  <criacao>2009-05-08T00:00:00-03:00</criacao>
+  <dataNascimento>1983-02-22T00:00:00-03:00</dataNascimento>
+  <emailPrincipal>fab1@spam.la</emailPrincipal>
+  <endereco>Rua Uruguai</endereco>
+  <estado>
+    <id>19</id>
+    <nome>Rio de Janeiro</nome>
+    <paisId>1</paisId>
+    <sigla>RJ</sigla>
+  </estado>
+  <estadoId>19</estadoId>
+  <ipCadastro>127.0.0.1</ipCadastro>
+  <login>fabricio_fab1</login>
+  <modulos>
+    <criacao>2009-05-08T10:04:35-03:00</criacao>
+    <moduloID>2</moduloID>
+    <pessoaID>21737810</pessoaID>
+  </modulos>
+  <modulos>
+    <alteracao>2011-04-14T18:04:15-03:00</alteracao>
+      <criacao>2009-05-08T10:04:35-03:00</criacao>
+      <moduloID>1</moduloID>
+      <pessoaID>21737810</pessoaID>
+  </modulos>
+  <modulos>
+    <criacao>2009-05-08T10:04:35-03:00</criacao>
+    <moduloID>3</moduloID>
+    <pessoaID>21737810</pessoaID>
+  </modulos>
+  <modulos>
+    <criacao>2009-05-08T10:04:35-03:00</criacao>
+    <moduloID>4</moduloID>
+    <pessoaID>21737810</pessoaID>
+  </modulos>
+  <modulos>
+    <criacao>2009-05-08T10:04:35-03:00</criacao>
+    <moduloID>7</moduloID>
+    <pessoaID>21737810</pessoaID>
+  </modulos>
+  <nome>Fabricio Rodrigo Lopes</nome>
+  <numero>59</numero>
+  <optinCelular>false</optinCelular>
+  <optinGlobo>true</optinGlobo>
+  <optinParceiros>true</optinParceiros>
+  <origemId>181</origemId>
+  <pais>
+    <id>1</id>
+    <nome>Brasil</nome>
+    <sigla>BR</sigla>
+  </pais>
+  <paisId>1</paisId>
+  <perguntaId>3</perguntaId>
+  <resposta>preto</resposta>
+  <servicoOrigemId>807</servicoOrigemId>
+  <sexo>MASCULINO</sexo>
+  <status>ATIVO</status>
+  <telefoneCelular>99999999</telefoneCelular>
+  <telefoneCelularDdd>21</telefoneCelularDdd>
+  <telefoneResidencial>22881060</telefoneResidencial>
+  <telefoneResidencialDdd>21</telefoneResidencialDdd>
+  <tipoUsuario>NAO_ASSINANTE</tipoUsuario>
+</pessoa>

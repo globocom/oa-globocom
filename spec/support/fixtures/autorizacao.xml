@@ -1,0 +1,13 @@
+<?xml version="1.0" encoding="UTF-8" standalone="yes"?>
+  <usuarioAutorizado>
+    <emailPrincipal>fab1@spam.la</emailPrincipal>
+            <glbId>1484e00106ea401d57902541631200e8a6d44556132366c754c4261655666625537614531655252536e6262626c63676676436c6c316744544d5636617651707a6d417a49756b6e3830415a4a394f36773a303a66616231407370616d2e6c61</glbId>
+    <ip>10.2.25.160</ip>
+    <login>fab1@spam.la</login>
+    <servicoID>2626</servicoID>
+    <status>AUTORIZADO</status>
+    <statusUsuario>ATIVO</statusUsuario>
+    <tipoUsuario>NAO_ASSINANTE</tipoUsuario>
+    <username>fabricio_fab1</username>
+    <usuarioID>21737810</usuarioID>
+  </usuarioAutorizado>
