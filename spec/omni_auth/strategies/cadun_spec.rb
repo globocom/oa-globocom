@@ -52,7 +52,7 @@ describe OmniAuth::Strategies::Cadun do
     specify { should include(:mobile => "21 99999999") }
     specify { should include(:phone => "21 22881060") }
     specify { should include(:cpf => "09532034765") }
-    specify { should include(:url => "/go_back")}
+    specify { should include(:url => "/go_back") }
   
   end
 
