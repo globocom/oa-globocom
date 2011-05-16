@@ -15,7 +15,7 @@ describe OACadun::User do
   end
   
   describe "#birthday" do
-    it { subject.birthday.should == Time.mktime(1983, 02, 22) }
+    it { subject.birthday.should == Date.new(1983, 02, 22) }
   end
   
   describe "#phone" do

@@ -22,7 +22,7 @@ module OACadun
     end
     
     def birthday
-      Time.parse(dataNascimento)
+      Date.parse(dataNascimento)
     end
   
     def phone
