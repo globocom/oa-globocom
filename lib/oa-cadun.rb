@@ -10,5 +10,5 @@ require 'cadun'
 require 'omni_auth/strategies/cadun'
 
 module OACadun
-  VERSION = '0.1.1'
+  VERSION = '0.2'
 end
