@@ -1,11 +1,14 @@
-$:.push File.expand_path("lib", __FILE__)
+$:.push File.expand_path('lib', __FILE__)
 
 require 'uri'
 require 'cgi'
 require 'net/http'
-require 'oa-core'
 require 'nokogiri'
 require 'date'
-require 'oa-cadun/gateway'
-require 'oa-cadun/user'
+require 'oa-core'
+require 'cadun'
 require 'omni_auth/strategies/cadun'
+
+module OACadun
+  VERSION = '0.1.1'
+end

@@ -14,9 +14,9 @@ module OmniAuth
       end
       
       def auth_hash
-        @params = CGI.parse(URI.parse(env["REQUEST_URI"]).query)
-        @glb_id = params["GLBID"].first
-        @url = params["url"].first
+        @params = CGI.parse(URI.parse(env['REQUEST_URI']).query)
+        @glb_id = params['GLBID'].first
+        @url = params['url'].first
         
         { :GLBID => glb_id,
           :url => url,
@@ -39,7 +39,7 @@ module OmniAuth
       
       protected
       def user
-        @user ||= OACadun::User.new(glb_id, env["REMOTE_ADDR"], service_id)
+        @user ||= ::Cadun::User.new(glb_id, env['REMOTE_ADDR'], service_id)
       end
       
       def service_id
