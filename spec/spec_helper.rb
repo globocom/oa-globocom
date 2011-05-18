@@ -1,5 +1,6 @@
 require "#{File.dirname(__FILE__)}/../lib/oa-cadun"
 require 'fakeweb'
+require 'rack/mock'
 
 Dir["#{File.dirname(__FILE__)}/support/**/*.rb"].each { |f| require f }
 

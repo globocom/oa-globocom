@@ -3,45 +3,60 @@ require 'spec_helper'
 
 describe OmniAuth::Strategies::Cadun do
 
-  let(:app) { lambda{ |env| [200, {}, ['Hello']] } }
+  let(:app) { lambda { |env| [200, {}, ['Hello']] } }
+  let(:strategy) { OmniAuth::Strategies::Cadun.new(app, :service_id => 1) }
   
   describe "#request_phase" do
+    context "when it has a referer" do
+      before do
+        strategy.call!(Rack::MockRequest.env_for("", "rack.session" => {}, "HTTP_REFERER" => "http://test.localhost/auth/cadun"))
 
-    before do
-      @status, @headers, @body = OmniAuth::Strategies::Cadun.new(app, :service_id => 1).request_phase
+        @status, @headers, @body = strategy.request_phase
+      end
+
+      describe "status" do
+        subject { @status }
+        specify { should == 302 }
+      end
+
+      describe "headers" do
+        subject { @headers }
+        specify { should include("Location" => "https://login.dev.globoi.com/login/1?url=http%3A%2F%2Ftest.localhost%2Fauth%2Fcadun%2Fcallback") }
+      end
     end
     
-    describe "status" do
-      subject { @status }
-      specify { should == 302 }
-    end
-    
-    describe "headers" do
-      subject { @headers }
-      specify { should include("Location" => "https://login.dev.globoi.com/login/1") }
-    end
+    context "when it has a referer and a different port" do
+      before do
+        strategy.call!(Rack::MockRequest.env_for("", "rack.session" => {}, "HTTP_REFERER" => "http://test.localhost:8080/auth/cadun"))
 
+        @status, @headers, @body = strategy.request_phase
+      end
+
+      describe "status" do
+        subject { @status }
+        specify { should == 302 }
+      end
+
+      describe "headers" do
+        subject { @headers }
+        specify { should include("Location" => "https://login.dev.globoi.com/login/1?url=http%3A%2F%2Ftest.localhost%3A8080%2Fauth%2Fcadun%2Fcallback") }
+      end
+    end
   end
   
   describe "#auth_hash" do
-
-    let(:strategy) { OmniAuth::Strategies::Cadun.new(app, :service_id => 1) }
-    
     before do
       stub_requests
-      
-      strategy.call!({ "rack.session" => {},
-                       "REQUEST_URI" => "http://localhost?GLBID=GLBID&url=/go_back",
-                       "REMOTE_ADDR" => "127.0.0.1" })
+      strategy.call!(Rack::MockRequest.env_for("http://localhost?GLBID=GLBID&url=/go_back", "rack.session" => {}))
     end
     
-    subject { strategy.auth_hash }
+    subject { strategy.auth_hash[:user_info] }
     
     specify { should include(:GLBID => "GLBID") }
     specify { should include(:id => "21737810") }
     specify { should include(:email => "fab1@spam.la") }
     specify { should include(:status => "ATIVO") }
-    specify { should include(:username => "fabricio_fab1") }
+    specify { should include(:nickname => "fabricio_fab1") }
     specify { should include(:name => "Fabricio Rodrigo Lopes") }
     specify { should include(:address => "Rua Uruguai, 59") }
     specify { should include(:suburb => "Andaraí") }
