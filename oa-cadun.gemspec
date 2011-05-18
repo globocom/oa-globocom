@@ -19,7 +19,6 @@ Gem::Specification.new do |s|
   
   s.add_dependency 'oa-core'
   s.add_dependency 'cadun'
-  s.add_dependency 'nokogiri'
   s.add_development_dependency 'rack'
   s.add_development_dependency 'rspec'
   s.add_development_dependency 'rr'
