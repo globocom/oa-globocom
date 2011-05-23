@@ -4,7 +4,7 @@ require "oa-cadun/version"
 
 Gem::Specification.new do |s|
   s.name        = "oa-cadun"
-  s.version     = OACadun::VERSION
+  s.version     = OACadun::VERSION::STRING
   s.platform    = Gem::Platform::RUBY
   s.authors     = ["Bruno Azisaka Maciel"]
   s.email       = ["bruno@azisaka.com.br"]
