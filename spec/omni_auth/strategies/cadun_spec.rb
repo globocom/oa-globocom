@@ -4,12 +4,12 @@ require 'spec_helper'
 describe OmniAuth::Strategies::Cadun do
 
   let(:app) { lambda { |env| [200, {}, ['Hello']] } }
-  let(:strategy) { OmniAuth::Strategies::Cadun.new(app, :service_id => 1) }
+  let(:strategy) { OmniAuth::Strategies::Cadun.new(app, :service_id => 1, :config => File.join(File.dirname(__FILE__), "..", "..", "support", "fixtures", "config.yml")) }
   
   describe "#request_phase" do
     context "when it has a referer" do
       before do
-        strategy.call!(Rack::MockRequest.env_for("", "rack.session" => {}, "HTTP_REFERER" => "http://test.localhost/auth/cadun"))
+        strategy.call!(Rack::MockRequest.env_for("http://test.localhost/auth/cadun", "rack.session" => {}, "HTTP_HOST" => "test.localhost"))
 
         @status, @headers, @body = strategy.request_phase
       end
@@ -27,7 +27,7 @@ describe OmniAuth::Strategies::Cadun do
     
     context "when it has a referer and a different port" do
       before do
-        strategy.call!(Rack::MockRequest.env_for("", "rack.session" => {}, "HTTP_REFERER" => "http://test.localhost:8080/auth/cadun"))
+        strategy.call!(Rack::MockRequest.env_for("http://test.localhost:8080/auth/cadun", "rack.session" => {}, "HTTP_HOST" => "test.localhost", "SERVER_PORT" => "8080"))
 
         @status, @headers, @body = strategy.request_phase
       end

@@ -1,0 +1,5 @@
+cadun:
+  logout_url: https://login.dev.globoi.com/Servlet/do/logout
+  login_url: https://login.dev.globoi.com/login
+  auth_url: isp-authenticator.dev.globoi.com
+  auth_port: 8280

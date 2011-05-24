@@ -1,14 +1,21 @@
+require 'cadun/config'
+require 'cadun/user'
+require 'cadun/gateway'
+
 module OmniAuth
   module Strategies
     class Cadun
       include OmniAuth::Strategy
+      include ::Cadun
       
       def initialize(app, options = {})
+        Config.load_file(options[:config])
+        
         super(app, :cadun, options)
       end
       
       def request_phase
-        redirect "https://login.dev.globoi.com/login/#{service_id}?url=#{callback_url}"
+        redirect "#{Config.login_url}/#{service_id}?url=#{callback_url}"
       end
       
       def auth_hash
@@ -39,7 +46,7 @@ module OmniAuth
       
       protected
       def user
-        @user ||= ::Cadun::User.new(request.params['GLBID'], env['REMOTE_ADDR'], service_id)
+        @user ||= User.new(request.params['GLBID'], env['REMOTE_ADDR'], service_id)
       end
       
       def service_id
@@ -47,10 +54,11 @@ module OmniAuth
       end
       
       def callback_url
-        uri = URI.parse(request.referer)
-        port = uri.port == 80 ? nil : ":#{uri.port}"
+        uri = request.env['HTTP_HOST']
+        port = request.env['SERVER_PORT'] == "80" ? nil : ":#{request.env['SERVER_PORT']}"
+        scheme = request.env['rack.url_scheme']
         
-        callback_url = "http://#{uri.host}#{port}/auth/cadun/callback"
+        callback_url = "#{scheme}://#{uri}#{port}/auth/cadun/callback"
         URI.escape(callback_url, Regexp.new("[^#{URI::PATTERN::UNRESERVED}]"))
       end
     end
