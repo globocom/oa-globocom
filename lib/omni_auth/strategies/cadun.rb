@@ -39,14 +39,16 @@ module OmniAuth
             :birthday =>  user.birthday.strftime('%d/%m/%Y'),
             :mobile => user.mobile,
             :phone => user.phone,
-            :cpf => user.cpf
+            :cpf => user.cpf,
+            :user_type => user.user_type,
+            :zipcode => user.zipcode
           }
         }
       end
       
       protected
       def user
-        @user ||= User.new(request.params['GLBID'], env['REMOTE_ADDR'], service_id)
+        @user ||= User.new(:glb_id => request.params['GLBID'], :ip => env['REMOTE_ADDR'], :service_id => service_id)
       end
       
       def service_id
