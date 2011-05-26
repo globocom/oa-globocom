@@ -69,11 +69,11 @@ describe OmniAuth::Strategies::Cadun do
       specify { subject[:user_info].should include(:email => "fab1@spam.la") }
       specify { subject[:user_info].should include(:gender => "MASCULINO") }
       specify { subject[:user_info].should include(:GLBID => "GLBID") }
-      specify { subject[:user_info].should include(:id => "21737810") }
+      specify { subject[:user_info].should include(:user_id => "21737810") }
       specify { subject[:user_info].should include(:mobile => "21 99999999") }
       specify { subject[:user_info].should include(:name => "Fabricio Rodrigo Lopes") }
       specify { subject[:user_info].should include(:neighborhood => "Andaraí") }
-      specify { subject[:user_info].should include(:nickname => "fabricio_fab1") }
+      specify { subject[:user_info].should include(:login => "fabricio_fab1") }
       specify { subject[:user_info].should include(:phone => "21 22881060") }
       specify { subject[:user_info].should include(:state => "RJ") }
       specify { subject[:user_info].should include(:status => "ATIVO") }
