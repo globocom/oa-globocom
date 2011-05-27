@@ -80,6 +80,7 @@ describe OmniAuth::Strategies::Cadun do
       specify { subject[:user_info].should include(:url => "/go_back") }
       specify { subject[:user_info].should include(:user_type => "NAO_ASSINANTE") }
       specify { subject[:user_info].should include(:zipcode => "20510060") }
+      specify { subject[:user_info].should include(:complement => "807") }
     end
   end
 
