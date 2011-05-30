@@ -4,7 +4,7 @@ require 'rack/mock'
 
 Dir["#{File.dirname(__FILE__)}/support/**/*.rb"].each { |f| require f }
 
-RSpec.configure do |config|
+RSpec.configure do |config|  
   config.before :suite do
     FakeWeb.allow_net_connect = false
   end

@@ -16,7 +16,7 @@ Gem::Specification.new do |s|
   s.require_paths = %w(lib)
   
   s.add_dependency 'oa-core'
-  s.add_dependency 'cadun', '0.2.4'
+  s.add_dependency 'cadun', '0.3.0'
   s.add_development_dependency 'rack'
   s.add_development_dependency 'rspec'
   s.add_development_dependency 'rr'

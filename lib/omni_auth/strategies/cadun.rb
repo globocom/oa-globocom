@@ -18,6 +18,14 @@ module OmniAuth
         redirect "#{Config.login_url}/#{service_id}?url=#{callback_url}"
       end
       
+      def callback_phase
+        begin
+          super
+        rescue => e
+          fail!(:invalid_credentials, e)
+        end
+      end
+      
       def auth_hash
         self.class.build_auth_hash(user, request)
       end

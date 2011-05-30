@@ -44,6 +44,34 @@ describe OmniAuth::Strategies::Cadun do
     end
   end
   
+  describe "#callback_phase" do
+    context "when the authorization fails" do
+      before do
+        FakeWeb.register_uri :put, "http://isp-authenticator.dev.globoi.com:8280/ws/rest/autorizacao",
+                             :body => nil
+
+        strategy.call! Rack::MockRequest.env_for("http://localhost/auth/cadun/callback", "rack.session" => {})
+      end
+
+      subject { strategy.callback_phase }
+
+      specify { strategy.env['omniauth.auth'].should be_nil }
+      specify { strategy.env['omniauth.error.type'].should == :invalid_credentials }
+    end
+    
+    context "when the authorization succeeds" do
+      before do
+        stub_requests
+        strategy.call! Rack::MockRequest.env_for("http://localhost/auth/cadun/callback", "rack.session" => {})
+      end
+
+      subject { strategy.callback_phase }
+
+      specify { strategy.env['omniauth.auth'].should_not be_nil }
+      specify { strategy.env['omniauth.error.type'].should be_nil }
+    end
+  end
+  
   describe "#auth_hash" do
     before do
       stub_requests
@@ -69,7 +97,7 @@ describe OmniAuth::Strategies::Cadun do
       specify { subject[:user_info].should include(:email => "fab1@spam.la") }
       specify { subject[:user_info].should include(:gender => "MASCULINO") }
       specify { subject[:user_info].should include(:GLBID => "GLBID") }
-      specify { subject[:user_info].should include(:user_id => "21737810") }
+      specify { subject[:user_info].should include(:cadun_id => "21737810") }
       specify { subject[:user_info].should include(:mobile => "21 99999999") }
       specify { subject[:user_info].should include(:name => "Fabricio Rodrigo Lopes") }
       specify { subject[:user_info].should include(:neighborhood => "Andaraí") }
