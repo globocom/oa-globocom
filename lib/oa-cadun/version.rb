@@ -1,9 +1,9 @@
 module OACadun
   module VERSION
-    MAJOR = 3
+    MAJOR = 0
     MINOR = 1
-    TINY  = 4
+    PATCH  = 0
     
-    STRING = [MAJOR, MINOR, TINY] * '.'
+    STRING = [MAJOR, MINOR, PATCH] * '.'
   end
 end
