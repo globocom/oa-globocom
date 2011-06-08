@@ -7,6 +7,7 @@ module OmniAuth
     class Cadun
       include OmniAuth::Strategy
       include ::Cadun
+      include CadunHelper
       
       def initialize(app, options = {})
         Config.load_file(options[:config])
@@ -39,7 +40,7 @@ module OmniAuth
       
       protected
       def user
-        @user ||= User.new(:glb_id => request.params['GLBID'], :ip => env['REMOTE_ADDR'], :service_id => service_id)
+        @user ||= User.new(:glb_id => request.params['GLBID'], :ip => client_ip(env), :service_id => service_id)
       end
       
       def service_id

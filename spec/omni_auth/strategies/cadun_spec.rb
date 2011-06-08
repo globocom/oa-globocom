@@ -47,9 +47,7 @@ describe OmniAuth::Strategies::Cadun do
   describe "#callback_phase" do
     context "when the authorization fails" do
       before do
-        FakeWeb.register_uri :put, "http://isp-authenticator.dev.globoi.com:8280/ws/rest/autorizacao",
-                             :body => nil
-
+        stub_fail_requests
         strategy.call! Rack::MockRequest.env_for("http://localhost/auth/cadun/callback", "rack.session" => {})
       end
 
