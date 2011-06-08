@@ -1,4 +1,4 @@
-require "#{File.dirname(__FILE__)}/../lib/oa-cadun"
+require "#{File.dirname(__FILE__)}/../lib/oa-globocom"
 require 'fakeweb'
 require 'rack/mock'
 

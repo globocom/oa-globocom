@@ -1,19 +1,17 @@
-# CadUn OmniAuth
+# Globo.com OmniAuth
 
-CadUn is an authentication service provided by Globo.com. Currently it's only available for internal services. It will be public very soon.
-
-The goal of this gem is to create a bridge between Cadun and your app through OmniAuth.
+The goal of this gem is to create a bridge between Globo.com's authentication and your app through OmniAuth.
 
 ## Installation
 
 Add into your Gemfile
 
-    gem "oa-cadun"
+    gem "oa-globocom"
     
 ## Configuration
   
 The middleware has 2 important options: `:service_id` and `:config_file`.
-:service_id is the number of your service on CadUn.
+:service_id is the number of your service at Globo.com.
 :config_file is the YAML formatted file with the urls you want to use:
 
     cadun:
@@ -24,13 +22,13 @@ The middleware has 2 important options: `:service_id` and `:config_file`.
 
 The `config_file` must be in that format, otherwise it won't work. The final result will look like this:
 
-    config.middleware.use OmniAuth::Strategies::Cadun, :service_id => 1234, :config_file => "#{File.dirname(__FILE__)}/cadun.yml"
+    config.middleware.use OmniAuth::Strategies::GloboCom, :service_id => 1234, :config_file => "#{File.dirname(__FILE__)}/cadun.yml"
     
 After that, you just need to follow the OmniAuth standard configuration creating a callback controller to handle the CadUn's redirect. Something like this:
 
     class SessionsController < ActionController::Base
       def new
-        redirect_to logged_in? ? dashboard_url : '/auth/cadun'
+        redirect_to logged_in? ? dashboard_url : '/auth/globocom'
       end
 
       def create
@@ -55,7 +53,7 @@ After that, you just need to follow the OmniAuth standard configuration creating
       end
     end
     
-That way the controller will check if OmniAuth has returned the CadUn's data, if so it will find or create an user, if not it will redirect the user back to the CadUn authentication screen.
+That way the controller will check if OmniAuth has returned the Globo.com's data, if so it will find or create an user, if not it will redirect the user back to the CadUn authentication screen.
 
 And set your routes:
 
@@ -70,7 +68,7 @@ Let's say your application works with many service ids. You can work with a "SET
 
 Add to the configuration:
 
-    config.middleware.use OmniAuth::Strategies::Cadun, :service_id => 1234, :setup => true, :config => "cadun.yml"
+    config.middleware.use OmniAuth::Strategies::GloboCom, :service_id => 1234, :setup => true, :config => "cadun.yml"
     
 Then add to your callback controller:
 
