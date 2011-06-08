@@ -6,17 +6,15 @@ module OmniAuth
   module Strategies
     class Cadun
       include OmniAuth::Strategy
-      include ::Cadun
-      include CadunHelper
       
       def initialize(app, options = {})
-        Config.load_file(options[:config])
+        ::Cadun::Config.load_file(options[:config])
         
         super(app, :cadun, options)
       end
       
       def request_phase
-        redirect "#{Config.login_url}/#{service_id}?url=#{callback_url}"
+        redirect "#{::Cadun::Config.login_url}/#{service_id}?url=#{callback_url}"
       end
       
       def callback_phase
@@ -31,16 +29,8 @@ module OmniAuth
         self.class.build_auth_hash(user, request)
       end
       
-      def self.build_auth_hash(user, request = nil)
-        hash = { :provider => "cadun", :uid => user.id, :user_info => user.to_hash.merge(:birthday =>  user.birthday.strftime('%d/%m/%Y')) }
-        hash[:user_info].merge!(:GLBID => request.params['GLBID'], :url => request.params['url']) if request
-        
-        hash
-      end
-      
-      protected
       def user
-        @user ||= User.new(:glb_id => request.params['GLBID'], :ip => client_ip(env), :service_id => service_id)
+        @user ||= ::Cadun::User.new(:glb_id => request.params['GLBID'], :ip => client_ip, :service_id => service_id)
       end
       
       def service_id
@@ -54,6 +44,21 @@ module OmniAuth
         
         callback_url = "#{scheme}://#{uri}#{port}/auth/cadun/callback"
         URI.escape(callback_url, Regexp.new("[^#{URI::PATTERN::UNRESERVED}]"))
+      end
+      
+      def client_ip
+        if env['HTTP_X_FORWARDED_FOR'] and not env['HTTP_X_FORWARDED_FOR'].empty?
+          env['HTTP_X_FORWARDED_FOR'].split(',').last.strip
+        else
+          env['REMOTE_ADDR']
+        end
+      end
+      
+      def self.build_auth_hash(user, request = nil)
+        hash = { :provider => "cadun", :uid => user.id, :user_info => user.to_hash.merge(:birthday =>  user.birthday.strftime('%d/%m/%Y')) }
+        hash[:user_info].merge!(:GLBID => request.params['GLBID'], :url => request.params['url']) if request
+        
+        hash
       end
     end
   end

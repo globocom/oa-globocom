@@ -15,13 +15,11 @@ describe OmniAuth::Strategies::Cadun do
       end
 
       describe "status" do
-        subject { @status }
-        specify { should == 302 }
+        it { @status.should == 302 }
       end
 
       describe "headers" do
-        subject { @headers }
-        specify { should include("Location" => "https://login.dev.globoi.com/login/1?url=http%3A%2F%2Ftest.localhost%2Fauth%2Fcadun%2Fcallback") }
+        it { @headers.should include("Location" => "https://login.dev.globoi.com/login/1?url=http%3A%2F%2Ftest.localhost%2Fauth%2Fcadun%2Fcallback") }
       end
     end
     
@@ -33,13 +31,11 @@ describe OmniAuth::Strategies::Cadun do
       end
 
       describe "status" do
-        subject { @status }
-        specify { should == 302 }
+        it { @status.should == 302 }
       end
 
       describe "headers" do
-        subject { @headers }
-        specify { should include("Location" => "https://login.dev.globoi.com/login/1?url=http%3A%2F%2Ftest.localhost%3A8080%2Fauth%2Fcadun%2Fcallback") }
+        it { @headers.should include("Location" => "https://login.dev.globoi.com/login/1?url=http%3A%2F%2Ftest.localhost%3A8080%2Fauth%2Fcadun%2Fcallback") }
       end
     end
   end
@@ -48,65 +44,90 @@ describe OmniAuth::Strategies::Cadun do
     context "when the authorization fails" do
       before do
         stub_fail_requests
-        strategy.call! Rack::MockRequest.env_for("http://localhost/auth/cadun/callback", "rack.session" => {})
+        strategy.call! Rack::MockRequest.env_for("http://localhost/auth/cadun/callback?GLBID=GLBID", "rack.session" => {}, "REMOTE_ADDR" => "127.0.0.1")
       end
 
-      subject { strategy.callback_phase }
-
-      specify { strategy.env['omniauth.auth'].should be_nil }
-      specify { strategy.env['omniauth.error.type'].should == :invalid_credentials }
+      it { strategy.env['omniauth.auth'].should be_nil }
+      it { strategy.env['omniauth.error'].message.should == "not authorized" }
+      it { strategy.env['omniauth.error.type'].should == :invalid_credentials }
     end
     
     context "when the authorization succeeds" do
       before do
         stub_requests
-        strategy.call! Rack::MockRequest.env_for("http://localhost/auth/cadun/callback", "rack.session" => {})
+        strategy.call! Rack::MockRequest.env_for("http://localhost/auth/cadun/callback?GLBID=GLBID", "rack.session" => {}, "REMOTE_ADDR" => "127.0.0.1")
       end
 
-      subject { strategy.callback_phase }
-
-      specify { strategy.env['omniauth.auth'].should_not be_nil }
-      specify { strategy.env['omniauth.error.type'].should be_nil }
+      it { strategy.env['omniauth.auth'].should_not be_nil }
+      it { strategy.env['omniauth.error'].should be_nil }
+      it { strategy.env['omniauth.error.type'].should be_nil }
     end
   end
   
   describe "#auth_hash" do
     before do
       stub_requests
-      strategy.call! Rack::MockRequest.env_for("http://localhost?GLBID=GLBID&url=/go_back", "rack.session" => {})
+      strategy.call! Rack::MockRequest.env_for("http://localhost?GLBID=GLBID&url=/go_back", "rack.session" => {}, "REMOTE_ADDR" => "127.0.0.1")
     end
     
-    subject { strategy.auth_hash }
-    
     describe ":uid" do
-      specify { subject[:uid].should == "21737810" }
+      it { strategy.auth_hash[:uid].should == "21737810" }
     end
     
     describe ":provider" do
-      specify { subject[:provider].should == "cadun" }
+      it { strategy.auth_hash[:provider].should == "cadun" }
     end
     
     describe ":user_info" do
-      specify { subject[:user_info].should include(:address => "Rua Uruguai, 59") }
-      specify { subject[:user_info].should include(:birthday => "22/02/1983") }
-      specify { subject[:user_info].should include(:city => "Rio de Janeiro") }
-      specify { subject[:user_info].should include(:country => "Brasil") }
-      specify { subject[:user_info].should include(:cpf => "09532034765") }
-      specify { subject[:user_info].should include(:email => "fab1@spam.la") }
-      specify { subject[:user_info].should include(:gender => "MASCULINO") }
-      specify { subject[:user_info].should include(:GLBID => "GLBID") }
-      specify { subject[:user_info].should include(:cadun_id => "21737810") }
-      specify { subject[:user_info].should include(:mobile => "21 99999999") }
-      specify { subject[:user_info].should include(:name => "Fabricio Rodrigo Lopes") }
-      specify { subject[:user_info].should include(:neighborhood => "Andaraí") }
-      specify { subject[:user_info].should include(:login => "fabricio_fab1") }
-      specify { subject[:user_info].should include(:phone => "21 22881060") }
-      specify { subject[:user_info].should include(:state => "RJ") }
-      specify { subject[:user_info].should include(:status => "ATIVO") }
-      specify { subject[:user_info].should include(:url => "/go_back") }
-      specify { subject[:user_info].should include(:user_type => "NAO_ASSINANTE") }
-      specify { subject[:user_info].should include(:zipcode => "20510060") }
-      specify { subject[:user_info].should include(:complement => "807") }
+      subject { strategy.auth_hash[:user_info] }
+      
+      it { should include(:address => "Rua Uruguai, 59") }
+      it { should include(:birthday => "22/02/1983") }
+      it { should include(:city => "Rio de Janeiro") }
+      it { should include(:country => "Brasil") }
+      it { should include(:cpf => "09532034765") }
+      it { should include(:email => "fab1@spam.la") }
+      it { should include(:gender => "MASCULINO") }
+      it { should include(:GLBID => "GLBID") }
+      it { should include(:cadun_id => "21737810") }
+      it { should include(:mobile => "21 99999999") }
+      it { should include(:name => "Fabricio Rodrigo Lopes") }
+      it { should include(:neighborhood => "Andaraí") }
+      it { should include(:login => "fabricio_fab1") }
+      it { should include(:phone => "21 22881060") }
+      it { should include(:state => "RJ") }
+      it { should include(:status => "ATIVO") }
+      it { should include(:url => "/go_back") }
+      it { should include(:user_type => "NAO_ASSINANTE") }
+      it { should include(:zipcode => "20510060") }
+      it { should include(:complement => "807") }
+    end
+  end
+  
+  describe "#client_ip" do
+    it 'should return ip from REMOTE_ADDR when it comes alone' do
+      strategy.call! Rack::MockRequest.env_for("http://test.localhost/auth/cadun", "rack.session" => {}, 'REMOTE_ADDR' =>  '200.201.0.15')
+      strategy.client_ip.should == '200.201.0.15'
+    end
+
+    it 'should return ip from REMOTE_ADDR when HTTP_X_FORWARDED_FOR is empty' do
+      strategy.call! Rack::MockRequest.env_for("http://test.localhost/auth/cadun", "rack.session" => {}, 'REMOTE_ADDR' =>  '200.201.0.20', 'HTTP_X_FORWARDED_FOR' => '')
+      strategy.client_ip.should == '200.201.0.20'
+    end
+
+    it 'should return ip from HTTP_X_FORWARDED_FOR when it comes alone' do
+      strategy.call! Rack::MockRequest.env_for("http://test.localhost/auth/cadun", "rack.session" => {}, 'HTTP_X_FORWARDED_FOR' =>  '201.10.0.15')
+      strategy.client_ip.should == '201.10.0.15'
+    end
+
+    it 'should return ip from HTTP_X_FORWARDED_FOR even if REMOTE_ADDR is present' do
+      strategy.call! Rack::MockRequest.env_for("http://test.localhost/auth/cadun", "rack.session" => {}, 'REMOTE_ADDR' =>  '200.201.0.15', 'HTTP_X_FORWARDED_FOR' =>  '201.10.0.16')
+      strategy.client_ip.should == '201.10.0.16'
+    end
+
+    it 'should always return the last ip from HTTP_X_FORWARDED_FOR' do
+      strategy.call! Rack::MockRequest.env_for("http://test.localhost/auth/cadun", "rack.session" => {}, 'HTTP_X_FORWARDED_FOR' =>  '201.10.0.15, 201.10.0.16, 201.10.0.17')
+      strategy.client_ip.should == '201.10.0.17'
     end
   end
 
