@@ -9,7 +9,7 @@ describe OmniAuth::Strategies::GloboCom do
   describe "#request_phase" do
     context "when it has a referer" do
       before do
-        strategy.call! Rack::MockRequest.env_for("http://test.localhost/auth/globocom", "rack.session" => {}, "HTTP_HOST" => "test.localhost")
+        strategy.call! Rack::MockRequest.env_for("http://test.localhost/auth/cadun", "rack.session" => {}, "HTTP_HOST" => "test.localhost")
 
         @status, @headers, @body = strategy.request_phase
       end
@@ -19,13 +19,13 @@ describe OmniAuth::Strategies::GloboCom do
       end
 
       describe "headers" do
-        it { @headers.should include("Location" => "https://login.dev.globoi.com/login/1?url=http%3A%2F%2Ftest.localhost%2Fauth%2Fglobocom%2Fcallback") }
+        it { @headers.should include("Location" => "https://login.dev.globoi.com/login/1?url=http%3A%2F%2Ftest.localhost%2Fauth%2Fcadun%2Fcallback") }
       end
     end
     
     context "when it has a referer and a different port" do
       before do
-        strategy.call!(Rack::MockRequest.env_for("http://test.localhost:8080/auth/globocom", "rack.session" => {}, "HTTP_HOST" => "test.localhost", "SERVER_PORT" => "8080"))
+        strategy.call!(Rack::MockRequest.env_for("http://test.localhost:8080/auth/cadun", "rack.session" => {}, "HTTP_HOST" => "test.localhost", "SERVER_PORT" => "8080"))
 
         @status, @headers, @body = strategy.request_phase
       end
@@ -35,7 +35,7 @@ describe OmniAuth::Strategies::GloboCom do
       end
 
       describe "headers" do
-        it { @headers.should include("Location" => "https://login.dev.globoi.com/login/1?url=http%3A%2F%2Ftest.localhost%3A8080%2Fauth%2Fglobocom%2Fcallback") }
+        it { @headers.should include("Location" => "https://login.dev.globoi.com/login/1?url=http%3A%2F%2Ftest.localhost%3A8080%2Fauth%2Fcadun%2Fcallback") }
       end
     end
   end
@@ -44,7 +44,7 @@ describe OmniAuth::Strategies::GloboCom do
     context "when the authorization fails" do
       before do
         stub_fail_requests
-        strategy.call! Rack::MockRequest.env_for("http://localhost/auth/globocom/callback?GLBID=GLBID", "rack.session" => {}, "REMOTE_ADDR" => "127.0.0.1")
+        strategy.call! Rack::MockRequest.env_for("http://localhost/auth/cadun/callback?GLBID=GLBID", "rack.session" => {}, "REMOTE_ADDR" => "127.0.0.1")
       end
 
       it { strategy.env['omniauth.auth'].should be_nil }
@@ -55,7 +55,7 @@ describe OmniAuth::Strategies::GloboCom do
     context "when the authorization succeeds" do
       before do
         stub_requests
-        strategy.call! Rack::MockRequest.env_for("http://localhost/auth/globocom/callback?GLBID=GLBID", "rack.session" => {}, "REMOTE_ADDR" => "127.0.0.1")
+        strategy.call! Rack::MockRequest.env_for("http://localhost/auth/cadun/callback?GLBID=GLBID", "rack.session" => {}, "REMOTE_ADDR" => "127.0.0.1")
       end
 
       it { strategy.env['omniauth.auth'].should_not be_nil }
@@ -75,7 +75,7 @@ describe OmniAuth::Strategies::GloboCom do
     end
     
     describe ":provider" do
-      it { strategy.auth_hash[:provider].should == "globocom" }
+      it { strategy.auth_hash[:provider].should == "cadun" }
     end
     
     describe ":user_info" do
@@ -106,27 +106,27 @@ describe OmniAuth::Strategies::GloboCom do
   
   describe "#client_ip" do
     it 'should return ip from REMOTE_ADDR when it comes alone' do
-      strategy.call! Rack::MockRequest.env_for("http://test.localhost/auth/globocom", "rack.session" => {}, 'REMOTE_ADDR' =>  '200.201.0.15')
+      strategy.call! Rack::MockRequest.env_for("http://test.localhost/auth/cadun", "rack.session" => {}, 'REMOTE_ADDR' =>  '200.201.0.15')
       strategy.client_ip.should == '200.201.0.15'
     end
 
     it 'should return ip from REMOTE_ADDR when HTTP_X_FORWARDED_FOR is empty' do
-      strategy.call! Rack::MockRequest.env_for("http://test.localhost/auth/globocom", "rack.session" => {}, 'REMOTE_ADDR' =>  '200.201.0.20', 'HTTP_X_FORWARDED_FOR' => '')
+      strategy.call! Rack::MockRequest.env_for("http://test.localhost/auth/cadun", "rack.session" => {}, 'REMOTE_ADDR' =>  '200.201.0.20', 'HTTP_X_FORWARDED_FOR' => '')
       strategy.client_ip.should == '200.201.0.20'
     end
 
     it 'should return ip from HTTP_X_FORWARDED_FOR when it comes alone' do
-      strategy.call! Rack::MockRequest.env_for("http://test.localhost/auth/globocom", "rack.session" => {}, 'HTTP_X_FORWARDED_FOR' =>  '201.10.0.15')
+      strategy.call! Rack::MockRequest.env_for("http://test.localhost/auth/cadun", "rack.session" => {}, 'HTTP_X_FORWARDED_FOR' =>  '201.10.0.15')
       strategy.client_ip.should == '201.10.0.15'
     end
 
     it 'should return ip from HTTP_X_FORWARDED_FOR even if REMOTE_ADDR is present' do
-      strategy.call! Rack::MockRequest.env_for("http://test.localhost/auth/globocom", "rack.session" => {}, 'REMOTE_ADDR' =>  '200.201.0.15', 'HTTP_X_FORWARDED_FOR' =>  '201.10.0.16')
+      strategy.call! Rack::MockRequest.env_for("http://test.localhost/auth/cadun", "rack.session" => {}, 'REMOTE_ADDR' =>  '200.201.0.15', 'HTTP_X_FORWARDED_FOR' =>  '201.10.0.16')
       strategy.client_ip.should == '201.10.0.16'
     end
 
     it 'should always return the last ip from HTTP_X_FORWARDED_FOR' do
-      strategy.call! Rack::MockRequest.env_for("http://test.localhost/auth/globocom", "rack.session" => {}, 'HTTP_X_FORWARDED_FOR' =>  '201.10.0.15, 201.10.0.16, 201.10.0.17')
+      strategy.call! Rack::MockRequest.env_for("http://test.localhost/auth/cadun", "rack.session" => {}, 'HTTP_X_FORWARDED_FOR' =>  '201.10.0.15, 201.10.0.16, 201.10.0.17')
       strategy.client_ip.should == '201.10.0.17'
     end
   end

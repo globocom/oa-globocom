@@ -10,7 +10,7 @@ module OmniAuth
       def initialize(app, options = {})
         Cadun::Config.load_file(options[:config])
         
-        super(app, :globocom, options)
+        super(app, :cadun, options)
       end
       
       def request_phase
@@ -55,7 +55,7 @@ module OmniAuth
       end
       
       def self.build_auth_hash(user, request = nil)
-        hash = { :provider => "globocom", :uid => user.id, :user_info => user.to_hash.merge(:birthday =>  user.birthday.strftime('%d/%m/%Y')) }
+        hash = { :provider => "cadun", :uid => user.id, :user_info => user.to_hash.merge(:birthday =>  user.birthday.strftime('%d/%m/%Y')) }
         hash[:user_info].merge!(:GLBID => request.params['GLBID'], :url => request.params['url']) if request
         
         hash
