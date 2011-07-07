@@ -1,6 +1,6 @@
-require 'globocom-auth/config'
-require 'globocom-auth/user'
-require 'globocom-auth/gateway'
+require 'cadun/config'
+require 'cadun/user'
+require 'cadun/gateway'
 
 module OmniAuth
   module Strategies
@@ -8,13 +8,13 @@ module OmniAuth
       include OmniAuth::Strategy
       
       def initialize(app, options = {})
-        GloboComAuth::Config.load_file(options[:config])
+        Cadun::Config.load_file(options[:config])
         
         super(app, :globocom, options)
       end
       
       def request_phase
-        redirect "#{GloboComAuth::Config.login_url}/#{service_id}?url=#{callback_url}"
+        redirect "#{Cadun::Config.login_url}/#{service_id}?url=#{callback_url}"
       end
       
       def callback_phase
@@ -30,7 +30,7 @@ module OmniAuth
       end
       
       def user
-        @user ||= GloboComAuth::User.new(:glb_id => request.params['GLBID'], :ip => client_ip, :service_id => service_id)
+        @user ||= Cadun::User.new(:glb_id => request.params['GLBID'], :ip => client_ip, :service_id => service_id)
       end
       
       def service_id
