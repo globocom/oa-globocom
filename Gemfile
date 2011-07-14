@@ -1,4 +1,5 @@
+source "http://10.2.124.201"
 source "http://rubygems.org"
 gemspec
 
-gem 'cadun', :require => "cadun", :git => "git://ngit.globoi.com/ruby-cadun/ruby-cadun.git"
+gem 'cadun', '~> 0.4.0'
