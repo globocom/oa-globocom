@@ -1,7 +1,3 @@
-require 'cadun/config'
-require 'cadun/user'
-require 'cadun/gateway'
-
 module OmniAuth
   module Strategies
     class GloboCom
