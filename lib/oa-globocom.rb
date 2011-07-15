@@ -1,5 +1,5 @@
-$:.push File.expand_path('lib', __FILE__)
-
+require 'rubygems'
 require 'oa-core'
 require 'cadun'
-require 'omni_auth/strategies/globocom'
+
+require File.dirname(__FILE__) + '/omni_auth/strategies/globocom'
