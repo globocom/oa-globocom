@@ -1,6 +1,7 @@
 require 'rubygems'
 require 'oa-core'
 require 'cadun'
+require 'cadun/config'
 
 module OmniAuth
   module Strategies
