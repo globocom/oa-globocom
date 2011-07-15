@@ -16,10 +16,10 @@ Gem::Specification.new do |s|
   s.require_paths = %w(lib)
   
   s.add_dependency 'oa-core', '~> 0.2.6'
-  s.add_dependency 'cadun', '~> 0.5.2'
+  s.add_dependency 'cadun', '~> 0.5.3'
   s.add_development_dependency 'rack'
   s.add_development_dependency 'rake'
   s.add_development_dependency 'rspec'
   s.add_development_dependency 'rr'
-  s.add_development_dependency 'webmock'
+  s.add_development_dependency 'fakeweb'
 end
