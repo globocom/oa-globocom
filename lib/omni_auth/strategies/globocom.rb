@@ -1,3 +1,7 @@
+require 'rubygems'
+require 'oa-core'
+require 'cadun'
+
 module OmniAuth
   module Strategies
     class GloboCom
