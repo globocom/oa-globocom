@@ -22,7 +22,7 @@ module OmniAuth
         begin
           super
         rescue => e
-          fail!(:invalid_credentials, e)
+          fail!(e.message, e.message)
         end
       end
       
