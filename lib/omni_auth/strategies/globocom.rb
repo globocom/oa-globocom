@@ -8,10 +8,10 @@ module OmniAuth
     class GloboCom
       include OmniAuth::Strategy
       
-      def initialize(app, options = {})
-        Cadun::Config.load_file(options[:config])
+      def initialize(app, opts = {})
+        Cadun::Config.load_file(opts[:config])
         
-        super(app, :cadun, options)
+        super(app, :cadun, opts)
       end
       
       def request_phase
@@ -27,7 +27,10 @@ module OmniAuth
       end
       
       def auth_hash
-        self.class.build_auth_hash(user, request)
+        hash = { :provider => "cadun", :uid => user.id, :user_info => user.to_hash.merge(:birthday =>  user.birthday.strftime('%d/%m/%Y')) }
+        hash[:user_info].merge!(:GLBID => request.params['GLBID'], :url => request.params['url']) if request
+        
+        hash
       end
       
       def user
@@ -53,13 +56,6 @@ module OmniAuth
         else
           env['REMOTE_ADDR']
         end
-      end
-      
-      def self.build_auth_hash(user, request = nil)
-        hash = { :provider => "cadun", :uid => user.id, :user_info => user.to_hash.merge(:birthday =>  user.birthday.strftime('%d/%m/%Y')) }
-        hash[:user_info].merge!(:GLBID => request.params['GLBID'], :url => request.params['url']) if request
-        
-        hash
       end
     end
   end

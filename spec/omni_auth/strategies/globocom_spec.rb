@@ -48,8 +48,8 @@ describe OmniAuth::Strategies::GloboCom do
       end
 
       it { strategy.env['omniauth.auth'].should be_nil }
-      it { strategy.env['omniauth.error'].should == "not authorized" }
-      it { strategy.env['omniauth.error.type'].should == :"not authorized" }
+      it { strategy.env['omniauth.error'].should == "Unauthorized" }
+      it { strategy.env['omniauth.error.type'].should == :Unauthorized }
     end
     
     context "when the authorization succeeds" do
