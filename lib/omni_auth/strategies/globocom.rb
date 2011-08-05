@@ -24,7 +24,7 @@ module OmniAuth
       def callback_phase
         begin
           super
-        rescue => e
+        rescue Exception => e
           logger.error(log_exception(e)) if logger
           
           fail!(e.message, e.message)

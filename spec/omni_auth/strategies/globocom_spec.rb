@@ -48,8 +48,8 @@ describe OmniAuth::Strategies::GloboCom do
       end
 
       it { strategy.env['omniauth.auth'].should be_nil }
-      it { strategy.env['omniauth.error'].should == "Unauthorized" }
-      it { strategy.env['omniauth.error.type'].should == :Unauthorized }
+      it { strategy.env['omniauth.error'].should == "NAO_AUTORIZADO" }
+      it { strategy.env['omniauth.error.type'].should == :NAO_AUTORIZADO }
     end
     
     context "when the authorization succeeds" do
@@ -144,8 +144,8 @@ describe OmniAuth::Strategies::GloboCom do
       stub_fail_requests
       strategy.call! Rack::MockRequest.env_for("http://localhost/auth/cadun/callback?GLBID=GLBID", "rack.session" => {}, "REMOTE_ADDR" => "127.0.0.1")
       
-      exception = Exception.new('Error')
-      strategy.log_exception(exception).should == "SERVER_NAME: localhost | PATH_INFO: /auth/cadun/callback | QUERY_STRING: GLBID=GLBID | EXCEPTION: Error"
+      exception = Exception.new('NAO_AUTORIZADO')
+      strategy.log_exception(exception).should == "SERVER_NAME: localhost | PATH_INFO: /auth/cadun/callback | QUERY_STRING: GLBID=GLBID | EXCEPTION: NAO_AUTORIZADO"
     end
   end
   
