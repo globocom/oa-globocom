@@ -131,4 +131,50 @@ describe OmniAuth::Strategies::GloboCom do
     end
   end
 
+  describe "#log_env" do
+    it 'should render the log' do
+      stub_fail_requests
+      strategy.call! Rack::MockRequest.env_for("http://localhost/auth/cadun/callback?GLBID=GLBID", "rack.session" => {}, "REMOTE_ADDR" => "127.0.0.1")
+      strategy.log_env.should == "SERVER_NAME: localhost | PATH_INFO: /auth/cadun/callback | QUERY_STRING: GLBID=GLBID"
+    end
+  end
+  
+  describe "#log_exception" do
+    it "should render the log" do
+      stub_fail_requests
+      strategy.call! Rack::MockRequest.env_for("http://localhost/auth/cadun/callback?GLBID=GLBID", "rack.session" => {}, "REMOTE_ADDR" => "127.0.0.1")
+      
+      exception = Exception.new('Error')
+      strategy.log_exception(exception).should == "SERVER_NAME: localhost | PATH_INFO: /auth/cadun/callback | QUERY_STRING: GLBID=GLBID | EXCEPTION: Error"
+    end
+  end
+  
+  describe "logging failures" do
+    before do
+      pending("RR doesn't implement superclass stubs. I don't know how to figure it out yet.")
+    end
+    
+    it "should log the failure" do
+      strategy = OmniAuth::Strategies::GloboCom.new app, :service_id => 1, :config => "#{File.dirname(__FILE__)}/../../support/fixtures/config.yml", :logger => Logger.new($stdout)
+      stub_fail_requests
+      
+      logger = mock('logger')
+      mock(logger).error('SERVER_NAME: localhost | PATH_INFO: /auth/cadun/callback | QUERY_STRING: GLBID=GLBID | EXCEPTION: Exception')
+      stub(strategy).call_app! { raise Exception }
+      stub(strategy).logger { logger }
+      
+      strategy.call! Rack::MockRequest.env_for("http://localhost/auth/cadun/callback?GLBID=GLBID", "rack.session" => {}, "REMOTE_ADDR" => "127.0.0.1")
+    end
+    
+    it "should not log the failure" do
+      stub_fail_requests
+      
+      logger = mock('logger')
+      dont_allow(logger).error
+      stub(strategy).call_app! { raise Exception }
+      stub(strategy).logger { nil }
+      
+      strategy.call! Rack::MockRequest.env_for("http://localhost/auth/cadun/callback?GLBID=GLBID", "rack.session" => {}, "REMOTE_ADDR" => "127.0.0.1")
+    end
+  end
 end

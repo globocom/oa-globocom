@@ -8,9 +8,12 @@ module OmniAuth
     class GloboCom
       include OmniAuth::Strategy
       
+      attr_reader :logger
+      
       def initialize(app, opts = {})
         Cadun::Config.load_file(opts[:config])
         
+        @logger = opts[:logger]
         super(app, :cadun, opts)
       end
       
@@ -22,6 +25,8 @@ module OmniAuth
         begin
           super
         rescue => e
+          logger.error(log_exception(e)) if logger
+          
           fail!(e.message, e.message)
         end
       end
@@ -56,6 +61,14 @@ module OmniAuth
         else
           env['REMOTE_ADDR']
         end
+      end
+      
+      def log_env
+        "SERVER_NAME: #{request.env['SERVER_NAME']} | PATH_INFO: #{request.env['PATH_INFO']} | QUERY_STRING: #{request.env['QUERY_STRING']}"
+      end
+      
+      def log_exception(exception)
+        "#{log_env} | EXCEPTION: #{exception}"
       end
     end
   end
