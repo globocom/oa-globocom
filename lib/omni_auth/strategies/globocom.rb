@@ -64,7 +64,7 @@ module OmniAuth
       end
       
       def log_env
-        "SERVER_NAME: #{request.env['SERVER_NAME']} | PATH_INFO: #{request.env['PATH_INFO']} | QUERY_STRING: #{request.env['QUERY_STRING']}"
+        "#{Time.now.strftime("%d/%m/%Y %H:%M")} - SERVER_NAME: #{request.env['SERVER_NAME']} | PATH_INFO: #{request.env['PATH_INFO']} | QUERY_STRING: #{request.env['QUERY_STRING']}"
       end
       
       def log_exception(exception)

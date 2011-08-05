@@ -1,6 +1,7 @@
 require "#{File.dirname(__FILE__)}/../lib/oa-globocom"
 require 'fakeweb'
 require 'rack/mock'
+require 'timecop'
 
 Dir["#{File.dirname(__FILE__)}/support/**/*.rb"].each { |f| require f }
 

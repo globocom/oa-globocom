@@ -134,18 +134,23 @@ describe OmniAuth::Strategies::GloboCom do
   describe "#log_env" do
     it 'should render the log' do
       stub_fail_requests
-      strategy.call! Rack::MockRequest.env_for("http://localhost/auth/cadun/callback?GLBID=GLBID", "rack.session" => {}, "REMOTE_ADDR" => "127.0.0.1")
-      strategy.log_env.should == "SERVER_NAME: localhost | PATH_INFO: /auth/cadun/callback | QUERY_STRING: GLBID=GLBID"
+      Timecop.travel(Time.now) do
+        strategy.call! Rack::MockRequest.env_for("http://localhost/auth/cadun/callback?GLBID=GLBID", "rack.session" => {}, "REMOTE_ADDR" => "127.0.0.1")
+        strategy.log_env.should == "#{Time.now.strftime("%d/%m/%Y %H:%M")} - SERVER_NAME: localhost | PATH_INFO: /auth/cadun/callback | QUERY_STRING: GLBID=GLBID"
+      end
     end
   end
   
   describe "#log_exception" do
     it "should render the log" do
       stub_fail_requests
-      strategy.call! Rack::MockRequest.env_for("http://localhost/auth/cadun/callback?GLBID=GLBID", "rack.session" => {}, "REMOTE_ADDR" => "127.0.0.1")
       
-      exception = Exception.new('NAO_AUTORIZADO')
-      strategy.log_exception(exception).should == "SERVER_NAME: localhost | PATH_INFO: /auth/cadun/callback | QUERY_STRING: GLBID=GLBID | EXCEPTION: NAO_AUTORIZADO"
+      Timecop.travel(Time.now) do
+        strategy.call! Rack::MockRequest.env_for("http://localhost/auth/cadun/callback?GLBID=GLBID", "rack.session" => {}, "REMOTE_ADDR" => "127.0.0.1")
+      
+        exception = Exception.new('NAO_AUTORIZADO')
+        strategy.log_exception(exception).should == "#{Time.now.strftime("%d/%m/%Y %H:%M")} - SERVER_NAME: localhost | PATH_INFO: /auth/cadun/callback | QUERY_STRING: GLBID=GLBID | EXCEPTION: NAO_AUTORIZADO"
+      end
     end
   end
   
