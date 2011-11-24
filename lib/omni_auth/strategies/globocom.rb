@@ -11,10 +11,10 @@ module OmniAuth
       attr_reader :logger
       
       def initialize(app, opts = {})
-        Cadun::Config.load_file(opts[:config])
+        Cadun::Config.load_file opts[:config]
         
         @logger = opts[:logger]
-        super(app, :cadun, opts)
+        super app, :cadun, opts
       end
       
       def request_phase
@@ -25,21 +25,21 @@ module OmniAuth
         begin
           super
         rescue Exception => e
-          logger.error(log_exception(e)) if logger
+          logger.error log_exception(e) if logger
           
-          fail!(e.message, e.message)
+          fail! e.message, e.message
         end
       end
       
       def auth_hash
-        hash = { :provider => "cadun", :uid => user.id, :user_info => user.to_hash.merge(:birthday =>  user.birthday.strftime('%d/%m/%Y')) }
-        hash[:user_info].merge!(:GLBID => request.params['GLBID'], :url => request.params['url']) if request
+        hash = { :provider => "cadun", :uid => user.id, :info => user.to_hash.merge(:birthday => user.birthday.strftime('%d/%m/%Y')) }
+        hash[:credentials] = { :GLBID => request.params['GLBID'], :url => request.params['url'] } if request
         
         hash
       end
       
       def user
-        @user ||= Cadun::User.new(:glb_id => request.params['GLBID'], :ip => client_ip, :service_id => service_id)
+        @user ||= Cadun::User.new :glb_id => request.params['GLBID'], :ip => client_ip, :service_id => service_id
       end
       
       def service_id
@@ -52,15 +52,11 @@ module OmniAuth
         scheme = request.env['rack.url_scheme']
         
         callback_url = "#{scheme}://#{uri}#{port}/auth/#{name}/callback"
-        URI.escape(callback_url, Regexp.new("[^#{URI::PATTERN::UNRESERVED}]"))
+        URI.escape callback_url, Regexp.new("[^#{URI::PATTERN::UNRESERVED}]")
       end
       
       def client_ip
-        if env['HTTP_X_FORWARDED_FOR'] and not env['HTTP_X_FORWARDED_FOR'].empty?
-          env['HTTP_X_FORWARDED_FOR'].split(',').last.strip
-        else
-          env['REMOTE_ADDR']
-        end
+        env['HTTP_X_FORWARDED_FOR'].present? ? env['HTTP_X_FORWARDED_FOR'].split(',').last.strip : env['REMOTE_ADDR']
       end
       
       def log_env
