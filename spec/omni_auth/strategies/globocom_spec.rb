@@ -79,54 +79,59 @@ describe OmniAuth::Strategies::GloboCom do
     end
     
     describe ":user_info" do
-      subject { strategy.auth_hash[:user_info] }
+      subject { strategy.auth_hash[:info] }
       
-      it { should include(:address => "Rua Uruguai, 59") }
-      it { should include(:birthday => "22/02/1983") }
-      it { should include(:city => "Rio de Janeiro") }
-      it { should include(:country => "Brasil") }
-      it { should include(:cpf => "09532034765") }
-      it { should include(:email => "fab1@spam.la") }
-      it { should include(:gender => "MASCULINO") }
+      it { should include :address => "Rua Uruguai, 59" }
+      it { should include :birthday => "22/02/1983" }
+      it { should include :city => "Rio de Janeiro" }
+      it { should include :country => "Brasil" }
+      it { should include :cpf => "09532034765" }
+      it { should include :email => "fab1@spam.la" }
+      it { should include :gender => "MASCULINO" }
+      it { should include :cadun_id => "21737810" }
+      it { should include :mobile => "21 99999999" }
+      it { should include :name => "Fabricio Rodrigo Lopes" }
+      it { should include :neighborhood => "Andaraí" }
+      it { should include :login => "fabricio_fab1" }
+      it { should include :phone => "21 22881060" }
+      it { should include :state => "RJ" }
+      it { should include :status => "ATIVO" }
+      it { should include :user_type => "NAO_ASSINANTE" }
+      it { should include :zipcode => "20510060" }
+      it { should include :complement => "807" }
+    end
+    
+    describe ":credentials" do
+      subject { strategy.auth_hash[:credentials] }
+      
       it { should include(:GLBID => "GLBID") }
-      it { should include(:cadun_id => "21737810") }
-      it { should include(:mobile => "21 99999999") }
-      it { should include(:name => "Fabricio Rodrigo Lopes") }
-      it { should include(:neighborhood => "Andaraí") }
-      it { should include(:login => "fabricio_fab1") }
-      it { should include(:phone => "21 22881060") }
-      it { should include(:state => "RJ") }
-      it { should include(:status => "ATIVO") }
       it { should include(:url => "/go_back") }
-      it { should include(:user_type => "NAO_ASSINANTE") }
-      it { should include(:zipcode => "20510060") }
-      it { should include(:complement => "807") }
     end
   end
   
   describe "#client_ip" do
     it 'should return ip from REMOTE_ADDR when it comes alone' do
-      strategy.call! Rack::MockRequest.env_for("http://test.localhost/auth/cadun", "rack.session" => {}, 'REMOTE_ADDR' =>  '200.201.0.15')
+      strategy.call! Rack::MockRequest.env_for "http://test.localhost/auth/cadun", "rack.session" => {}, 'REMOTE_ADDR' =>  '200.201.0.15'
       strategy.client_ip.should == '200.201.0.15'
     end
 
     it 'should return ip from REMOTE_ADDR when HTTP_X_FORWARDED_FOR is empty' do
-      strategy.call! Rack::MockRequest.env_for("http://test.localhost/auth/cadun", "rack.session" => {}, 'REMOTE_ADDR' =>  '200.201.0.20', 'HTTP_X_FORWARDED_FOR' => '')
+      strategy.call! Rack::MockRequest.env_for "http://test.localhost/auth/cadun", "rack.session" => {}, 'REMOTE_ADDR' =>  '200.201.0.20', 'HTTP_X_FORWARDED_FOR' => ''
       strategy.client_ip.should == '200.201.0.20'
     end
 
     it 'should return ip from HTTP_X_FORWARDED_FOR when it comes alone' do
-      strategy.call! Rack::MockRequest.env_for("http://test.localhost/auth/cadun", "rack.session" => {}, 'HTTP_X_FORWARDED_FOR' =>  '201.10.0.15')
+      strategy.call! Rack::MockRequest.env_for "http://test.localhost/auth/cadun", "rack.session" => {}, 'HTTP_X_FORWARDED_FOR' =>  '201.10.0.15'
       strategy.client_ip.should == '201.10.0.15'
     end
 
     it 'should return ip from HTTP_X_FORWARDED_FOR even if REMOTE_ADDR is present' do
-      strategy.call! Rack::MockRequest.env_for("http://test.localhost/auth/cadun", "rack.session" => {}, 'REMOTE_ADDR' =>  '200.201.0.15', 'HTTP_X_FORWARDED_FOR' =>  '201.10.0.16')
+      strategy.call! Rack::MockRequest.env_for "http://test.localhost/auth/cadun", "rack.session" => {}, 'REMOTE_ADDR' =>  '200.201.0.15', 'HTTP_X_FORWARDED_FOR' =>  '201.10.0.16'
       strategy.client_ip.should == '201.10.0.16'
     end
 
     it 'should always return the last ip from HTTP_X_FORWARDED_FOR' do
-      strategy.call! Rack::MockRequest.env_for("http://test.localhost/auth/cadun", "rack.session" => {}, 'HTTP_X_FORWARDED_FOR' =>  '201.10.0.15, 201.10.0.16, 201.10.0.17')
+      strategy.call! Rack::MockRequest.env_for "http://test.localhost/auth/cadun", "rack.session" => {}, 'HTTP_X_FORWARDED_FOR' =>  '201.10.0.15, 201.10.0.16, 201.10.0.17'
       strategy.client_ip.should == '201.10.0.17'
     end
   end
@@ -148,7 +153,7 @@ describe OmniAuth::Strategies::GloboCom do
       Timecop.travel(Time.local(2011, 11, 24, 1, 2, 0)) do
         strategy.call! Rack::MockRequest.env_for("http://localhost/auth/cadun/callback?GLBID=GLBID", "rack.session" => {}, "REMOTE_ADDR" => "127.0.0.1")
       
-        exception = Exception.new('NAO_AUTORIZADO')
+        exception = Exception.new 'NAO_AUTORIZADO'
         strategy.log_exception(exception).should == "24/11/2011 01:02 - SERVER_NAME: localhost | PATH_INFO: /auth/cadun/callback | QUERY_STRING: GLBID=GLBID | EXCEPTION: NAO_AUTORIZADO"
       end
     end
@@ -166,7 +171,7 @@ describe OmniAuth::Strategies::GloboCom do
         strategy.stub!(:call_app!).and_raise Exception
         strategy.stub!(:logger).and_return logger
       
-        strategy.call! Rack::MockRequest.env_for("http://localhost/auth/cadun/callback?GLBID=GLBID", "rack.session" => {}, "REMOTE_ADDR" => "127.0.0.1")
+        strategy.call! Rack::MockRequest.env_for "http://localhost/auth/cadun/callback?GLBID=GLBID", "rack.session" => {}, "REMOTE_ADDR" => "127.0.0.1"
       end
     end
     
@@ -174,9 +179,9 @@ describe OmniAuth::Strategies::GloboCom do
       stub_fail_requests
       
       strategy.stub!(:call_app!).and_raise Exception
-      strategy.should_not_receive(:log_exception)
+      strategy.should_not_receive :log_exception
       
-      strategy.call! Rack::MockRequest.env_for("http://localhost/auth/cadun/callback?GLBID=GLBID", "rack.session" => {}, "REMOTE_ADDR" => "127.0.0.1")
+      strategy.call! Rack::MockRequest.env_for "http://localhost/auth/cadun/callback?GLBID=GLBID", "rack.session" => {}, "REMOTE_ADDR" => "127.0.0.1"
     end
   end
 end
