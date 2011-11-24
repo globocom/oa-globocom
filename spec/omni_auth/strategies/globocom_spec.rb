@@ -145,39 +145,36 @@ describe OmniAuth::Strategies::GloboCom do
     it "should render the log" do
       stub_fail_requests
       
-      Timecop.travel(Time.now) do
+      Timecop.travel(Time.local(2011, 11, 24, 1, 2, 0)) do
         strategy.call! Rack::MockRequest.env_for("http://localhost/auth/cadun/callback?GLBID=GLBID", "rack.session" => {}, "REMOTE_ADDR" => "127.0.0.1")
       
         exception = Exception.new('NAO_AUTORIZADO')
-        strategy.log_exception(exception).should == "#{Time.now.strftime("%d/%m/%Y %H:%M")} - SERVER_NAME: localhost | PATH_INFO: /auth/cadun/callback | QUERY_STRING: GLBID=GLBID | EXCEPTION: NAO_AUTORIZADO"
+        strategy.log_exception(exception).should == "24/11/2011 01:02 - SERVER_NAME: localhost | PATH_INFO: /auth/cadun/callback | QUERY_STRING: GLBID=GLBID | EXCEPTION: NAO_AUTORIZADO"
       end
     end
   end
   
-  describe "logging failures" do
-    before do
-      pending("RR doesn't implement superclass stubs. I don't know how to figure it out yet.")
-    end
-    
+  describe "logging failures" do    
     it "should log the failure" do
-      strategy = OmniAuth::Strategies::GloboCom.new app, :service_id => 1, :config => "#{File.dirname(__FILE__)}/../../support/fixtures/config.yml", :logger => Logger.new($stdout)
+      logger = double('logger')
+      
+      strategy = OmniAuth::Strategies::GloboCom.new app, :service_id => 1, :config => "#{File.dirname(__FILE__)}/../../support/fixtures/config.yml", :logger => logger
       stub_fail_requests
       
-      logger = mock('logger')
-      mock(logger).error('SERVER_NAME: localhost | PATH_INFO: /auth/cadun/callback | QUERY_STRING: GLBID=GLBID | EXCEPTION: Exception')
-      stub(strategy).call_app! { raise Exception }
-      stub(strategy).logger { logger }
+      Timecop.travel(Time.local(2011, 11, 24, 1, 2, 0)) do
+        logger.should_receive(:error).with("24/11/2011 01:02 - SERVER_NAME: localhost | PATH_INFO: /auth/cadun/callback | QUERY_STRING: GLBID=GLBID | EXCEPTION: NAO_AUTORIZADO")
+        strategy.stub!(:call_app!).and_raise Exception
+        strategy.stub!(:logger).and_return logger
       
-      strategy.call! Rack::MockRequest.env_for("http://localhost/auth/cadun/callback?GLBID=GLBID", "rack.session" => {}, "REMOTE_ADDR" => "127.0.0.1")
+        strategy.call! Rack::MockRequest.env_for("http://localhost/auth/cadun/callback?GLBID=GLBID", "rack.session" => {}, "REMOTE_ADDR" => "127.0.0.1")
+      end
     end
     
     it "should not log the failure" do
       stub_fail_requests
       
-      logger = mock('logger')
-      dont_allow(logger).error
-      stub(strategy).call_app! { raise Exception }
-      stub(strategy).logger { nil }
+      strategy.stub!(:call_app!).and_raise Exception
+      strategy.should_not_receive(:log_exception)
       
       strategy.call! Rack::MockRequest.env_for("http://localhost/auth/cadun/callback?GLBID=GLBID", "rack.session" => {}, "REMOTE_ADDR" => "127.0.0.1")
     end
